@@ -10,7 +10,7 @@ pygame.init()
 # Screen dimensions and setup
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Reaction Game")
+pygame.display.set_caption("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA IM GOING CRAZY")
 
 # Colors
 WHITE = (255, 255, 255)
