@@ -7,17 +7,25 @@ from inputs import mouse
 
 pygame.init()
 
+# Screen dimensions and setup
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA IM GOING CRAZY")
+pygame.display.set_caption("Reaction Game")
 
+# Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
+# Fonts
 font = pygame.font.Font(None, 50)
 
+# Sound effects
+sound_correct = pygame.mixer.Sound("media/Sounds/Correct.mp3")
+sound_wrong = pygame.mixer.Sound("media/Sounds/Wrong.mp3")
+
+# Commands and initial setup
 commands = [
     utils.generate_random_key_command(base_time_limit=3),
     {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 2},
@@ -30,7 +38,6 @@ running = True
 start_time = None
 reaction_started = False
 
-# Variables for implicit combo
 combo_keys = []
 combo_index = 0
 
@@ -60,7 +67,6 @@ while running:
         screen, font, f"Time Left: {current_command.get('time_limit', 0):.2f}s", GREEN, 50, 150
     )
 
-    # Reaction time and timeout check
     if not reaction_started:
         start_time = time.time()
         reaction_started = True
@@ -68,6 +74,7 @@ while running:
     elapsed_time = time.time() - start_time
     if elapsed_time > current_command.get("time_limit", 0):
         print("Time's up!")
+        sound_wrong.play()
         end_game(score)
 
     for event in pygame.event.get():
@@ -79,44 +86,53 @@ while running:
             if combo_keys:
                 if keyboards.handle_keyboard_input(event, getattr(pygame, f"K_{combo_keys[combo_index]}")):
                     print(f"Key pressed: {combo_keys[combo_index].upper()} (Correct)")
+                    sound_correct.play()
                     combo_index += 1
                     score += 1
-                    reaction_started = False
+                    start_time = time.time()
+                    reaction_started = True
 
-                    if combo_index == len(combo_keys):  
+                    if combo_index == len(combo_keys):  # Combo completed
                         print("Combo completed!")
                         combo_keys = []
                         combo_index = 0
                         current_command = utils.pick_new_command(
                             commands + [utils.generate_random_key_command(base_time_limit=3)]
                         )
+                        reaction_started = False
                 elif event.type == pygame.KEYDOWN:
                     print(f"Key pressed: {pygame.key.name(event.key)} (Wrong Key)")
+                    sound_wrong.play()
                     end_game(score)
-
             else:
                 if keyboards.handle_keyboard_input(event, current_command["key"]):
                     print(f"Key pressed: {pygame.key.name(event.key)} (Correct)")
+                    sound_correct.play()
                     score += 1
-                    combo_keys = keyboards.generate_keyboard_input(
-                        "section_1", combo_length=6
-                    ) #Assuming section 1
+                    score, current_command["time_limit"] = utils.update_score(
+                        score, current_command.get("time_limit", 3), difficulty_multiplier=0.9
+                    )
+
+                    combo_keys = keyboards.generate_keyboard_input(combo_length=6)
                     combo_index = 0
-                    reaction_started = False
-                elif event.type == pygame.KEYDOWN:
-                    print(f"Key pressed: {pygame.key.name(event.key)} (Wrong Key)")
-                    end_game(score)
+                    start_time = time.time()
+                    reaction_started = True
 
         elif current_command["type"] == "mouse":
             if mouse.handle_mouse_input(event, current_command):
                 print(f"Mouse button clicked: {event.button} (Correct)")
+                sound_correct.play()
                 score += 1
+                score, current_command["time_limit"] = utils.update_score(
+                    score, current_command.get("time_limit", 3), difficulty_multiplier=0.9
+                )
                 current_command = utils.pick_new_command(
                     commands + [utils.generate_random_key_command(base_time_limit=3)]
                 )
                 reaction_started = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 print(f"Mouse button clicked: {event.button} (Wrong Button)")
+                sound_wrong.play()
                 end_game(score)
 
     pygame.display.flip()
@@ -128,3 +144,4 @@ pygame.display.flip()
 pygame.time.wait(3000)
 
 pygame.quit()
+
