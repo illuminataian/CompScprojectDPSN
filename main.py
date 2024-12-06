@@ -50,6 +50,7 @@ def end_game(score):
 
 while running:
     screen.fill(WHITE)
+
     if current_command["type"] == "key" and combo_keys:
         utils.draw_text(
             screen,
@@ -61,18 +62,19 @@ while running:
         )
     else:
         utils.draw_text(screen, font, f"Command: {current_command['action']}", BLACK, 50, 50)
-
     utils.draw_text(screen, font, f"Score: {score}", BLACK, 50, 100)
-    utils.draw_text(
-        screen, font, f"Time Left: {current_command.get('time_limit', 0):.2f}s", GREEN, 50, 150
-    )
 
     if not reaction_started:
         start_time = time.time()
         reaction_started = True
 
     elapsed_time = time.time() - start_time
-    if elapsed_time > current_command.get("time_limit", 0):
+    remaining_time = max(0, current_command.get("time_limit", 0) - elapsed_time)
+    utils.draw_text(
+        screen, font, f"Time Left: {remaining_time:.2f}s", GREEN, 50, 150
+    )
+
+    if remaining_time == 0:
         print("Time's up!")
         sound_wrong.play()
         end_game(score)
@@ -89,8 +91,8 @@ while running:
                     sound_correct.play()
                     combo_index += 1
                     score += 1
+
                     start_time = time.time()
-                    reaction_started = True
 
                     if combo_index == len(combo_keys):  # Combo completed
                         print("Combo completed!")
@@ -144,4 +146,3 @@ pygame.display.flip()
 pygame.time.wait(3000)
 
 pygame.quit()
-
