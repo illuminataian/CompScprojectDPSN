@@ -9,7 +9,7 @@ pygame.init()
 # Screen dimensions and setup
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Reaction Game")
+pygame.display.set_caption("AAAAAAAAAAAAAA IM GOING CRAZY")
 
 # Colors
 WHITE = (255, 255, 255)
@@ -88,6 +88,7 @@ while is_running:
         if current_task["type"] == "key":
             if combo_keys:
                 if keyboards.handle_keyboard_input(event, getattr(pygame, f"K_{combo_keys[combo_index]}")):
+                    print(f"Key pressed: {combo_keys[combo_index].upper()} (Correct)")
                     correct_sound.play()
                     combo_index += 1
                     score += 1
@@ -95,6 +96,7 @@ while is_running:
 
                     # Move to the next task if the combo is complete
                     if combo_index == len(combo_keys):
+                        print("Combo completed!")
                         combo_keys = []
                         combo_index = 0
                         current_task = utils.pick_new_command(
@@ -102,10 +104,12 @@ while is_running:
                         )
                         timer_started = False
                 elif event.type == pygame.KEYDOWN:
+                    print(f"Key pressed: {pygame.key.name(event.key)} (Wrong Key)")
                     wrong_sound.play()
                     end_game(score)
             else:
                 if keyboards.handle_keyboard_input(event, current_task["key"]):
+                    print(f"Key pressed: {pygame.key.name(event.key)} (Correct)")
                     correct_sound.play()
                     score += 1
                     score, current_task["time_limit"] = utils.update_score(
@@ -118,6 +122,7 @@ while is_running:
 
         elif current_task["type"] == "mouse":
             if mouse.handle_mouse_input(event, current_task):
+                print(f"Mouse button clicked: {event.button} (Correct)")
                 correct_sound.play()
                 score += 1
                 score, current_task["time_limit"] = utils.update_score(
@@ -128,6 +133,7 @@ while is_running:
                 )
                 timer_started = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                print(f"Mouse button clicked: {event.button} (Wrong Button)")
                 wrong_sound.play()
                 end_game(score)
 
