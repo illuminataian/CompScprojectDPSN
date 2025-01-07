@@ -24,3 +24,19 @@ def generate_random_key_command(base_time_limit=3):
         "time_limit": base_time_limit,
     }
 
+def draw_text_with_outline(screen, font, text, text_color, outline_color, center_x, center_y):
+    outline_offset = 2
+    # Render the main text to get its size
+    main_text = font.render(text, True, text_color)
+    text_rect = main_text.get_rect(center=(center_x, center_y))
+    
+    # Draw the outline by rendering the text at slightly offset positions
+    for dx in [-outline_offset, 0, outline_offset]:
+        for dy in [-outline_offset, 0, outline_offset]:
+            if dx != 0 or dy != 0:
+                outline_text = font.render(text, True, outline_color)
+                outline_rect = outline_text.get_rect(center=(center_x, center_y))
+                screen.blit(outline_text, (outline_rect.x + dx, outline_rect.y + dy))
+    
+    # Draw the main text
+    screen.blit(main_text, text_rect)

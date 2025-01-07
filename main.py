@@ -19,7 +19,7 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
 # Fonts
-font = pygame.font.Font(None, 50)
+font = pygame.font.Font(None, 100)
 
 # Sound effects
 correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
@@ -68,17 +68,19 @@ while is_running:
 
     # Display the current task
     if current_task["type"] == "key" and combo_keys:
-        utils.draw_text(
+        utils.draw_text_with_outline(
             screen,
             font,
             f"Command: Press {combo_keys[combo_index].upper()}",
+            (255,0,0),
             BLACK,
-            50,
-            50,
+            WIDTH/2, 
+            HEIGHT/2,
         )
     else:
-        utils.draw_text(screen, font, f"Command: {current_task['action']}", BLACK, 50, 50)
-    utils.draw_text(screen, font, f"Score: {score}", BLACK, 50, 100)
+        utils.draw_text_with_outline(screen, font, f"Command: {current_task['action']}", (255, 0, 0), BLACK, WIDTH/2, HEIGHT/2)
+        
+    utils.draw_text_with_outline(screen, font, f"Score: {score}", (255, 255, 0), (0, 0, 0), WIDTH/2, HEIGHT/2-100)
 
     # Start the timer for the current task
     if not timer_started:
@@ -88,7 +90,7 @@ while is_running:
     # Calculate remaining time
     elapsed_time = time.time() - start_time
     time_left = max(0, current_task.get("time_limit", 0) - elapsed_time)
-    utils.draw_text(screen, font, f"Time Left: {time_left:.2f}s", GREEN, 50, 150)
+    utils.draw_text_with_outline(screen, font, f"Time Left: {time_left:.2f}s", GREEN,(0, 0, 0), WIDTH/2, HEIGHT/2+100)
 
     # Lose condition
     if time_left == 0:
@@ -117,6 +119,11 @@ while is_running:
                         print("Combo completed!")
                         combo_keys = []
                         combo_index = 0
+
+                        # Update background after completing the combo
+                        update_background()
+
+                        # Pick a new task
                         current_task = utils.pick_new_command(
                             commands + [utils.generate_random_key_command(base_time_limit=3)]
                         )
@@ -137,27 +144,29 @@ while is_running:
                     combo_index = 0
                     start_time = time.time()
                     timer_started = True
+
                     # Update background only for single key events
                     if not combo_keys:
                         update_background()
+
                     
         elif current_task["type"] == "mouse":
-            if mouse.handle_mouse_input(event, current_task):
-                print(f"Mouse button clicked: {event.button} (Correct)")
-                correct_sound.play()
-                score += 1
-                score, current_task["time_limit"] = utils.update_score(
-                    score, current_task.get("time_limit", 3), difficulty_multiplier=0.9
-                )
-                update_background()
-                current_task = utils.pick_new_command(
-                    commands + [utils.generate_random_key_command(base_time_limit=3)]
-                )
-                timer_started = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                print(f"Mouse button clicked: {event.button} (Wrong Button)")
-                wrong_sound.play()
-                end_game(score)
+            if event.type == pygame.MOUSEBUTTONDOWN:  # Ensure it's a mouse click event
+                if mouse.handle_mouse_input(event, current_task):
+                    print(f"Mouse button clicked: {event.button} (Correct)")
+                    correct_sound.play()
+                    score, current_task["time_limit"] = utils.update_score(
+                        score, current_task.get("time_limit", 3), difficulty_multiplier=0.9
+                    )
+                    update_background()
+                    current_task = utils.pick_new_command(
+                        commands + [utils.generate_random_key_command(base_time_limit=3)]
+                    )
+                    timer_started = False
+                else:
+                    print(f"Mouse button clicked: {event.button} (Wrong Button)")
+                    wrong_sound.play()
+                    end_game(score)
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
