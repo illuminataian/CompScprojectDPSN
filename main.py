@@ -92,7 +92,7 @@ while is_running:
     time_left = max(0, current_task.get("time_limit", 0) - elapsed_time)
     utils.draw_text_with_outline(screen, font, f"Time Left: {time_left:.2f}s", GREEN,(0, 0, 0), WIDTH/2, HEIGHT/2+100)
 
-    # Lose condition
+    # Lose condition (TIME LIMIT)
     if time_left == 0:
         print("Time's up!")
         wrong_sound.play()
@@ -120,7 +120,6 @@ while is_running:
                         combo_keys = []
                         combo_index = 0
 
-                        # Update background after completing the combo
                         update_background()
 
                         # Pick a new task
@@ -145,13 +144,12 @@ while is_running:
                     start_time = time.time()
                     timer_started = True
 
-                    # Update background only for single key events
                     if not combo_keys:
                         update_background()
 
                     
         elif current_task["type"] == "mouse":
-            if event.type == pygame.MOUSEBUTTONDOWN:  # Ensure it's a mouse click event
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if mouse.handle_mouse_input(event, current_task):
                     print(f"Mouse button clicked: {event.button} (Correct)")
                     correct_sound.play()
