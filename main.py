@@ -9,6 +9,7 @@ pygame.init()
 # Screen dimensions and setup
 info = pygame.display.Info()
 WIDTH, HEIGHT = info.current_w, info.current_h
+GEN_X, GEN_Y  = WIDTH /2, HEIGHT/2
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("AAAAAAAAAAAAAA IM GOING CRAZY")
 
@@ -17,7 +18,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-
+TIME_LIMIT = 20
 # Fonts
 font = pygame.font.Font(None, 100)
 
@@ -41,7 +42,7 @@ def update_background():
 
 # Commands and initial setup
 commands = [
-    {"type": "key"},  # Placeholder 
+    utils.generate_random_key_command(),  # Placeholder 
     {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 1.5},
     {"type": "mouse", "action": "Right-click", "button": 3, "time_limit": 1.5},
 ]
@@ -60,7 +61,7 @@ def end_game(final_score):
 
 while is_running:
     screen.blit(backgrounds[current_background_index], (0, 0))
-    utils.draw_text_with_outline(screen, font, f"Command: {current_task['action']}", (255, 0, 0), BLACK, WIDTH / 2, HEIGHT / 2)
+    utils.draw_rect(screen, font, f"{current_task['action']}", (255, 0, 0), BLACK, GEN_X, GEN_Y)
     utils.draw_text_with_outline(screen, font, f"Score: {score}", (255, 255, 0), (0, 0, 0), WIDTH / 2, HEIGHT / 2 - 100)
 
     # Start the timer for the current task
@@ -89,10 +90,11 @@ while is_running:
         if current_task["type"] == "key":
             if keyboards.handle_keyboard_input(event, current_task["key"]):
                 print(f"Key pressed: {pygame.key.name(event.key)} (Correct)")
+                GEN_X, GEN_Y = utils.random_dims(HEIGHT, WIDTH)
                 correct_sound.play()
                 score += 1
                 score, current_task["time_limit"] = utils.update_score(
-                    score, current_task.get("time_limit", 3), difficulty_multiplier=0.9
+                    score, current_task.get("time_limit", TIME_LIMIT), difficulty_multiplier=0.9
                 )
                 update_background()
                 current_task = utils.pick_new_command(commands)
@@ -107,9 +109,10 @@ while is_running:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if mouse.handle_mouse_input(event, current_task):
                     print(f"Mouse button clicked: {event.button} (Correct)")
+                    GEN_X, GEN_Y = utils.random_dims(HEIGHT, WIDTH)
                     correct_sound.play()
                     score, current_task["time_limit"] = utils.update_score(
-                        score, current_task.get("time_limit", 3), difficulty_multiplier=0.9
+                        score, current_task.get("time_limit", TIME_LIMIT), difficulty_multiplier=0.9
                     )
                     update_background()
                     current_task = utils.pick_new_command(commands)
@@ -126,6 +129,6 @@ while is_running:
 screen.fill(WHITE)
 utils.draw_text(screen, font, f"Game Over! Final Score: {score}", RED, WIDTH // 2 - 200, HEIGHT // 2 - 50)
 pygame.display.flip()
-pygame.time.wait(3000)
+pygame.time.wait(5 * 1000)
 
 pygame.quit()

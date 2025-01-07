@@ -10,7 +10,7 @@ def pick_new_command(commands):
     command = random.choice(commands)
     if command["type"] == "key":
         # Dynamically generate the random key command
-        return generate_random_key_command(base_time_limit=3)
+        return generate_random_key_command(base_time_limit=20)
     return command
 
 def update_score(score, time_limit, difficulty_multiplier):
@@ -19,7 +19,7 @@ def update_score(score, time_limit, difficulty_multiplier):
     time_limit = max(time_limit, 0.5) #Set min time to 0.5 sec
     return score, time_limit
 
-def generate_random_key_command(base_time_limit=3):
+def generate_random_key_command(base_time_limit=20):
     random_letter = random.choice(string.ascii_uppercase)
     return {
         "type": "key",
@@ -29,7 +29,7 @@ def generate_random_key_command(base_time_limit=3):
     }
 
 def draw_text_with_outline(screen, font, text, text_color, outline_color, center_x, center_y):
-    outline_offset = 4
+    outline_offset = 2
     # Render the main text to get its size
     main_text = font.render(text, True, text_color)
     text_rect = main_text.get_rect(center=(center_x, center_y))
@@ -44,3 +44,23 @@ def draw_text_with_outline(screen, font, text, text_color, outline_color, center
     
     # Draw the main text
     screen.blit(main_text, text_rect)
+
+def draw_rect(screen, font, text, text_color, outline_color, center_x, center_y):
+    print(center_x, center_y)
+    main_text = font.render(text, True, text_color)
+    text_rect = main_text.get_rect(center=(center_x, center_y))
+    pygame.draw.rect(screen, (255, 0, 0), text_rect)
+    outline_offset = 2
+    # Render the main text to get its size  
+    # Draw the outline by rendering the text at slightly offset positions
+    for dx in [-outline_offset, 0, outline_offset]:
+        for dy in [-outline_offset, 0, outline_offset]:
+            if dx != 0 or dy != 0:
+                outline_text = font.render(text, True, outline_color)
+                outline_rect = outline_text.get_rect(center=(center_x, center_y))
+                screen.blit(outline_text, (outline_rect.x + dx, outline_rect.y + dy))
+
+
+def random_dims(HEIGHT, WIDTH):
+    GEN_X, GEN_Y = random.randint(0 + 100, WIDTH - 100), random.randint(0 + 100, HEIGHT - 100)
+    return GEN_X, GEN_Y
