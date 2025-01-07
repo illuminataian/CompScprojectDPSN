@@ -61,7 +61,7 @@ def end_game(final_score):
 
 while is_running:
     screen.blit(backgrounds[current_background_index], (0, 0))
-    utils.draw_rect(screen, font, f"{current_task['action']}", (255, 0, 0), BLACK, GEN_X, GEN_Y)
+    utils.draw_rect(screen, font, f"{current_task['action']}", (255, 0, 0), WHITE, GEN_X, GEN_Y)
     utils.draw_text_with_outline(screen, font, f"Score: {score}", (255, 255, 0), (0, 0, 0), WIDTH / 2, HEIGHT / 2 - 100)
 
     # Start the timer for the current task
