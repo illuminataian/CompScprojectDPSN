@@ -23,3 +23,4 @@ def generate_random_key_command(base_time_limit=3):
         "key": getattr(pygame, f"K_{random_letter.lower()}"),
         "time_limit": base_time_limit,
     }
+

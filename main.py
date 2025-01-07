@@ -7,8 +7,9 @@ from inputs import keyboards, mouse
 pygame.init()
 
 # Screen dimensions and setup
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+info = pygame.display.Info()
+WIDTH, HEIGHT = info.current_w, info.current_h
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("AAAAAAAAAAAAAA IM GOING CRAZY")
 
 # Colors
@@ -24,10 +25,25 @@ font = pygame.font.Font(None, 50)
 correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
 wrong_sound = pygame.mixer.Sound("media/Sounds/Wrong.mp3")
 
+# Backgrounds
+backgrounds = [
+    pygame.transform.scale(pygame.image.load("media/backgrounds/yellow.png"), (WIDTH, HEIGHT)),
+    pygame.transform.scale(pygame.image.load("media/backgrounds/red.png"), (WIDTH, HEIGHT)),
+    pygame.transform.scale(pygame.image.load("media/backgrounds/green.png"), (WIDTH, HEIGHT)),
+    pygame.transform.scale(pygame.image.load("media/backgrounds/purple.png"), (WIDTH, HEIGHT)),
+    pygame.transform.scale(pygame.image.load("media/backgrounds/blue.png"), (WIDTH, HEIGHT)),
+       
+]
+current_background_index = 0
+
+def update_background():
+    global current_background_index
+    current_background_index = (current_background_index + 1) % len(backgrounds)
+
 # Commands and initial setup
 commands = [
     utils.generate_random_key_command(base_time_limit=3),
-    {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 2},
+    {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 1.5},
     {"type": "mouse", "action": "Right-click", "button": 3, "time_limit": 1.5},
 ]
 
@@ -48,7 +64,7 @@ def end_game(final_score):
 
 
 while is_running:
-    screen.fill(WHITE)
+    screen.blit(backgrounds[current_background_index], (0, 0))
 
     # Display the current task
     if current_task["type"] == "key" and combo_keys:
@@ -74,17 +90,19 @@ while is_running:
     time_left = max(0, current_task.get("time_limit", 0) - elapsed_time)
     utils.draw_text(screen, font, f"Time Left: {time_left:.2f}s", GREEN, 50, 150)
 
-    # End game if time runs out
+    # Lose condition
     if time_left == 0:
         print("Time's up!")
         wrong_sound.play()
         end_game(score)
 
+    # Game quit event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             print("Game quit.")
             is_running = False
 
+        # Key event handling
         if current_task["type"] == "key":
             if combo_keys:
                 if keyboards.handle_keyboard_input(event, getattr(pygame, f"K_{combo_keys[combo_index]}")):
@@ -119,7 +137,10 @@ while is_running:
                     combo_index = 0
                     start_time = time.time()
                     timer_started = True
-
+                    # Update background only for single key events
+                    if not combo_keys:
+                        update_background()
+                    
         elif current_task["type"] == "mouse":
             if mouse.handle_mouse_input(event, current_task):
                 print(f"Mouse button clicked: {event.button} (Correct)")
@@ -128,6 +149,7 @@ while is_running:
                 score, current_task["time_limit"] = utils.update_score(
                     score, current_task.get("time_limit", 3), difficulty_multiplier=0.9
                 )
+                update_background()
                 current_task = utils.pick_new_command(
                     commands + [utils.generate_random_key_command(base_time_limit=3)]
                 )
