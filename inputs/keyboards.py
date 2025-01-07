@@ -1,21 +1,16 @@
 import random
 import pygame
 
-# Define keyboard sections
-keyboard_sections = {
-    "section_1": ["q", "w", "e", "a", "s", "d", "z", "x", "c"],
-    "section_2": ["r", "t", "y", "f", "g", "h", "v", "b", "n"],
-    "section_3": ["u", "i", "o", "j", "k", "l", "m", "p"],
-}
-
-def generate_keyboard_input(combo_length=6):
-    section_name = random.choice(list(keyboard_sections.keys()))
-    section = keyboard_sections[section_name]
-    if len(section) < combo_length:
-        raise ValueError(f"Section '{section_name}' does not have enough keys for a combo.")
-    return random.sample(section, combo_length)
+def generate_random_key_command():
+    """Generate a random key command."""
+    random_letter = random.choice("abcdefghijklmnopqrstuvwxyz")
+    return {
+        "type": "key",
+        "action": f"Press {random_letter.upper()}",
+        "key": getattr(pygame, f"K_{random_letter}"),
+        "time_limit": 3,
+    }
 
 def handle_keyboard_input(event, expected_key):
-    if event.type == pygame.KEYDOWN and event.key == expected_key:
-        return True
-    return False
+    """Check if the correct key is pressed."""
+    return event.type == pygame.KEYDOWN and event.key == expected_key

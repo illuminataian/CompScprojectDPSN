@@ -7,7 +7,11 @@ def draw_text(screen, font, text, color, x, y):
     screen.blit(text_surface, (x, y))
 
 def pick_new_command(commands):
-    return random.choice(commands)
+    command = random.choice(commands)
+    if command["type"] == "key":
+        # Dynamically generate the random key command
+        return generate_random_key_command(base_time_limit=3)
+    return command
 
 def update_score(score, time_limit, difficulty_multiplier):
     score += 1
@@ -25,7 +29,7 @@ def generate_random_key_command(base_time_limit=3):
     }
 
 def draw_text_with_outline(screen, font, text, text_color, outline_color, center_x, center_y):
-    outline_offset = 2
+    outline_offset = 4
     # Render the main text to get its size
     main_text = font.render(text, True, text_color)
     text_rect = main_text.get_rect(center=(center_x, center_y))
