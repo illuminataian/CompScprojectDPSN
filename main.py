@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 import utils
+import titlescreen
 from inputs import keyboards, mouse
 
 pygame.init()
@@ -22,6 +23,7 @@ RED = (255, 0, 0)
 
 # Fonts
 font = pygame.font.Font(None, 100)
+small_font = pygame.font.Font(None, 50)
 
 # Sound effects
 correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
@@ -47,8 +49,8 @@ def update_background():
 # Commands and initial setup
 commands = [
     utils.generate_random_key_command(),
-    {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 10.5},
-    {"type": "mouse", "action": "Right-click", "button": 3, "time_limit": 10.5},
+    {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 10.0},
+    {"type": "mouse", "action": "Right-click", "button": 3, "time_limit": 10.0},
 ]
 
 current_task = random.choice(commands)
@@ -64,6 +66,8 @@ def end_game(final_score):
     global is_running
     is_running = False
     print(f"Game Over! Final Score: {final_score}")
+    
+titlescreen.show_title_screen(screen, font, small_font, WIDTH, HEIGHT)
 
 while is_running:
     
@@ -98,7 +102,6 @@ while is_running:
                 print(f"Key pressed: {pygame.key.name(event.key)} (Correct)")
                 GEN_X, GEN_Y = utils.random_dims(HEIGHT, WIDTH)
                 correct_sound.play()
-                score += 1
                 score, current_task["time_limit"] = utils.update_score(
                     score, current_task.get("time_limit", TIME_LIMIT), difficulty_multiplier=0.9
                 )
@@ -107,7 +110,9 @@ while is_running:
                 timer_started = False
             elif event.type == pygame.KEYDOWN:
                 print(f"Key pressed: {pygame.key.name(event.key)} (Wrong Key)")
-        #        wrong_sound.play()
+                end_game(score)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                print(f"Mouse button clicked: {event.button} (Wrong Button)")
                 end_game(score)
 
         # Mouse event handling
@@ -125,8 +130,10 @@ while is_running:
                     timer_started = False
                 else:
                     print(f"Mouse button clicked: {event.button} (Wrong Button)")
-     #               wrong_sound.play()
                     end_game(score)
+            elif event.type == pygame.KEYDOWN:
+                print(f"Key pressed: {pygame.key.name(event.key)} (Wrong Key)")
+                end_game(score)
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
