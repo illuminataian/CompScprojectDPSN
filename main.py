@@ -12,19 +12,23 @@ WIDTH, HEIGHT = info.current_w, info.current_h
 GEN_X, GEN_Y  = WIDTH /2, HEIGHT/2
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("AAAAAAAAAAAAAA IM GOING CRAZY")
+TIME_LIMIT = 20
 
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-TIME_LIMIT = 20
+
 # Fonts
 font = pygame.font.Font(None, 100)
 
 # Sound effects
 correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
 wrong_sound = pygame.mixer.Sound("media/Sounds/Wrong.mp3")
+
+pygame.mixer.music.load("media/Sounds/CompScproject_loop.wav")
+pygame.mixer.music.play(-1)
 
 # Backgrounds
 backgrounds = [
@@ -42,9 +46,9 @@ def update_background():
 
 # Commands and initial setup
 commands = [
-    utils.generate_random_key_command(),  # Placeholder 
-    {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 1.5},
-    {"type": "mouse", "action": "Right-click", "button": 3, "time_limit": 1.5},
+    utils.generate_random_key_command(),
+    {"type": "mouse", "action": "Left-click", "button": 1, "time_limit": 10.5},
+    {"type": "mouse", "action": "Right-click", "button": 3, "time_limit": 10.5},
 ]
 
 current_task = random.choice(commands)
@@ -55,13 +59,16 @@ timer_started = False
 
 def end_game(final_score):
     #End the game and display the final score.
+    wrong_sound.play()
+    pygame.mixer.music.stop()
     global is_running
     is_running = False
     print(f"Game Over! Final Score: {final_score}")
 
 while is_running:
+    
     screen.blit(backgrounds[current_background_index], (0, 0))
-    utils.draw_rect(screen, font, f"{current_task['action']}", (255, 0, 0), WHITE, GEN_X, GEN_Y)
+    utils.draw_text_with_outline(screen, font, f"{current_task['action']}", (255, 0, 0), WHITE, WIDTH / 2, HEIGHT / 2 )
     utils.draw_text_with_outline(screen, font, f"Score: {score}", (255, 255, 0), (0, 0, 0), WIDTH / 2, HEIGHT / 2 - 100)
 
     # Start the timer for the current task
@@ -77,7 +84,6 @@ while is_running:
     # Lose condition (TIME LIMIT)
     if time_left == 0:
         print("Time's up!")
-        wrong_sound.play()
         end_game(score)
 
     # Event handling
@@ -101,7 +107,7 @@ while is_running:
                 timer_started = False
             elif event.type == pygame.KEYDOWN:
                 print(f"Key pressed: {pygame.key.name(event.key)} (Wrong Key)")
-                wrong_sound.play()
+        #        wrong_sound.play()
                 end_game(score)
 
         # Mouse event handling
@@ -119,7 +125,7 @@ while is_running:
                     timer_started = False
                 else:
                     print(f"Mouse button clicked: {event.button} (Wrong Button)")
-                    wrong_sound.play()
+     #               wrong_sound.play()
                     end_game(score)
 
     pygame.display.flip()
@@ -127,7 +133,7 @@ while is_running:
 
 # Game over screen
 screen.fill(WHITE)
-utils.draw_text(screen, font, f"Game Over! Final Score: {score}", RED, WIDTH // 2 - 200, HEIGHT // 2 - 50)
+utils.draw_text_with_outline(screen, font, f"Game Over! Final Score: {score}", RED,BLACK, WIDTH // 2, HEIGHT // 2)
 pygame.display.flip()
 pygame.time.wait(5 * 1000)
 
