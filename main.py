@@ -22,8 +22,8 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
 # Fonts
-font = pygame.font.Font(None, 100)
-small_font = pygame.font.Font(None, 50)
+title_Font=pygame.font.Font('media/Fonts/Ethnocentric Rg.otf',170)
+font = pygame.font.Font('media/Fonts/Orbitron-Black.ttf', 90)
 
 # Sound effects
 correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
@@ -67,7 +67,7 @@ def end_game(final_score):
     is_running = False
     print(f"Game Over! Final Score: {final_score}")
     
-titlescreen.show_title_screen(screen, font, small_font, WIDTH, HEIGHT)
+titlescreen.show_title_screen(screen, title_Font, WIDTH, HEIGHT)
 
 while is_running:
     
@@ -95,8 +95,10 @@ while is_running:
         if event.type == pygame.QUIT:
             print("Game quit.")
             is_running = False
-
-        # Key event handling
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            print("Game quit.")
+            is_running = False
+        # Keyboard event handling
         if current_task["type"] == "key":
             if keyboards.handle_keyboard_input(event, current_task["key"]):
                 print(f"Key pressed: {pygame.key.name(event.key)} (Correct)")
@@ -139,9 +141,22 @@ while is_running:
     pygame.time.Clock().tick(60)
 
 # Game over screen
-screen.fill(WHITE)
-utils.draw_text_with_outline(screen, font, f"Game Over! Final Score: {score}", RED,BLACK, WIDTH // 2, HEIGHT // 2)
-pygame.display.flip()
-pygame.time.wait(5 * 1000)
-
+game_end=True
+endtime=0
+while game_end:
+    screen.blit(pygame.transform.scale(pygame.image.load("media/backgrounds/blue.png"), (WIDTH, HEIGHT)), (0, 0))
+    utils.draw_text_with_outline(screen, font, f"Game Over! Final Score: {score}", RED,BLACK, WIDTH // 2, HEIGHT // 2)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_end = False
+            exit()
+        elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+            game_end = False
+            exit()
+    if endtime >= 150:
+        game_end = False
+        exit()     
+    endtime+=1
+    pygame.display.flip()
+    pygame.time.Clock().tick(60)
 pygame.quit()
