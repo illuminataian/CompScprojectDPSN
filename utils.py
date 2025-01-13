@@ -8,9 +8,7 @@ def draw_text(screen, font, text, color, x, y):
     screen.blit(text_surface, (x, y))
 
 def pick_new_command(commands, time_limit):
-    print(time_limit)
     index = math.floor(random.random() * 3) + 1
-    print(index)
     if index > 1:
         command = commands[0]
     else:

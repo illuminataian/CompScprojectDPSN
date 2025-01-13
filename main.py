@@ -135,7 +135,6 @@ while is_running:
                         if RECT.collidepoint(mouse_pos):
                             print(f"Mouse button clicked: {event.button} (Correct)")
                             GEN_X, GEN_Y = utils.random_dims(HEIGHT, WIDTH)
-                            print("ABE TERI MKC", current_task['time_limit'])
                             current_task = utils.pick_new_command(commands, time_limit=current_task['time_limit'])
                             correct_sound.play()
                             score, current_task["time_limit"] = utils.update_score(
@@ -176,7 +175,6 @@ while is_running:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if rect.collidepoint(mouse_pos):
-                        print("here")
                         current_task['time_limit'] = 10
                         score = 0
                         game_end = False
@@ -190,8 +188,7 @@ while is_running:
             pygame.display.flip()
             pygame.time.Clock().tick(60)
 
-if not is_running:
-    pygame.quit()
 
-else:
-    print("heheheha")
+
+pygame.quit()
+
