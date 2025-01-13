@@ -178,6 +178,7 @@ while is_running:
                     if rect.collidepoint(mouse_pos):
                         print("here")
                         current_task['time_limit'] = 10
+                        score = 0
                         game_end = False
                         is_running = True
                         pygame.mixer.music.load("media/Sounds/CompScproject_loop.wav")
