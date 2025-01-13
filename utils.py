@@ -1,17 +1,26 @@
 import pygame
 import random
 import string
+import math
 
 def draw_text(screen, font, text, color, x, y):
     text_surface = font.render(text, True, color)
     screen.blit(text_surface, (x, y))
 
-def pick_new_command(commands):
-    command = random.choice(commands)
+def pick_new_command(commands, time_limit):
+    print(time_limit)
+    index = math.floor(random.random() * 3) + 1
+    print(index)
+    if index > 1:
+        command = commands[0]
+    else:
+        command = random.choice(commands[1:])
     if command["type"] == "key":
         # Dynamically generate the random key command
-        return generate_random_key_command(base_time_limit=20)
-    return command
+        return generate_random_key_command(base_time_limit=time_limit)
+    else:
+        command['time_limit'] = time_limit
+        return command
 
 def update_score(score, time_limit, difficulty_multiplier):
     score += 1
@@ -19,7 +28,7 @@ def update_score(score, time_limit, difficulty_multiplier):
     time_limit = max(time_limit, 0.5) #Set min time to 0.5 sec
     return score, time_limit
 
-def generate_random_key_command(base_time_limit=20):
+def generate_random_key_command(base_time_limit):
     random_letter = random.choice(string.ascii_uppercase)
     return {
         "type": "key",
@@ -45,23 +54,64 @@ def draw_text_with_outline(screen, font, text, text_color, outline_color, center
     # Draw the main text
     screen.blit(main_text, text_rect)
 
-def draw_rect(screen, font, text, text_color, outline_color, center_x, center_y):
-    print(center_x, center_y)
+
+def draw_button(screen, font, text, text_color, outline_color, center_x, center_y, color):
     main_text = font.render(text, True, text_color)
     text_rect = main_text.get_rect(center=(center_x, center_y))
-    pygame.draw.rect(screen, (0, 0, 0), text_rect.inflate(20,20))
+    s = pygame.Surface(text_rect.inflate(60,60).size)
+    s.set_alpha(30)
+    s.fill((255, 255, 255))
+    screen.blit(s, (text_rect.inflate(60,60).left, text_rect.inflate(60,60).top))
+    pygame.draw.rect(s, pygame.color.Color(255, 255, 255, 100), text_rect.inflate(60,60))
+    for i in range(10):
+        pygame.draw.rect(screen, color, text_rect.inflate(60 - i, 60 - i), 1)
     outline_offset = 2
+    # Render the main text to get its size
+    main_text = font.render(text, True, color)
+    text_rect = main_text.get_rect(center=(center_x, center_y))
+    
+    # Draw the outline by rendering the text at slightly offset positions
     for dx in [-outline_offset, 0, outline_offset]:
         for dy in [-outline_offset, 0, outline_offset]:
             if dx != 0 or dy != 0:
-                outline_text = font.render(text, True, outline_color)
+                outline_text = font.render(text, True, (0, 0, 0))
                 outline_rect = outline_text.get_rect(center=(center_x, center_y))
                 screen.blit(outline_text, (outline_rect.x + dx, outline_rect.y + dy))
+
+    # Draw the main text
     screen.blit(main_text, text_rect)
+    return text_rect.inflate(60, 60)
+
+def draw_rect(screen, font, text, text_color, outline_color, center_x, center_y, color):
+    main_text = font.render(text, True, text_color)
+    text_rect = main_text.get_rect(center=(center_x, center_y))
+    s = pygame.Surface(text_rect.inflate(60,60).size)
+    s.set_alpha(30)
+    s.fill((255, 255, 255))
+    screen.blit(s, (text_rect.inflate(60,60).left, text_rect.inflate(60,60).top))
+    pygame.draw.rect(s, pygame.color.Color(255, 255, 255, 100), text_rect.inflate(60,60))
+    for i in range(10):
+        pygame.draw.rect(screen, color, text_rect.inflate(60 - i, 60 - i), 1)
+    outline_offset = 2
+    # Render the main text to get its size
+    main_text = font.render(text, True, color)
+    text_rect = main_text.get_rect(center=(center_x, center_y))
+    
+    # Draw the outline by rendering the text at slightly offset positions
+    for dx in [-outline_offset, 0, outline_offset]:
+        for dy in [-outline_offset, 0, outline_offset]:
+            if dx != 0 or dy != 0:
+                outline_text = font.render(text, True, (0, 0, 0))
+                outline_rect = outline_text.get_rect(center=(center_x, center_y))
+                screen.blit(outline_text, (outline_rect.x + dx, outline_rect.y + dy))
+
+    # Draw the main text
+    screen.blit(main_text, text_rect)
+    return text_rect.inflate(60, 60)
 
 
 def random_dims(HEIGHT, WIDTH):
-    GEN_X, GEN_Y = random.randint(0 + 100, WIDTH - 100), random.randint(0 + 100, HEIGHT - 100)
+    GEN_X, GEN_Y = random.randint(0 + 300, WIDTH - 300), random.randint(0 + 200, HEIGHT - 200)
     return GEN_X, GEN_Y
 
 def draw_text_gradient(screen, font, text, gradient_colors, glow_color, outline_color, center_x, center_y, outline_offset=2):
