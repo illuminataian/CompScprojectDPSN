@@ -10,7 +10,7 @@ def show_title_screen(screen, font, WIDTH, HEIGHT):
     outline_color = (0, 0, 0)  # Black Outline
 
     while running:
-        small_font = pygame.font.Font('media/Fonts/Orbitron-Bold.ttf',int(46 + (2*math.sin(offset*3))))
+        small_font = pygame.font.Font('media/Fonts/Orbitron-Bold.ttf',int(46 + (2*math.sin(offset*6))))
         screen.blit(pygame.transform.scale(pygame.image.load("media/backgrounds/blue.png"), (WIDTH, HEIGHT)), (0, 0))
 
        # utils.draw_text_with_outline(screen, font, "IMPULSE", (255, 225, 0), (0, 0, 0), WIDTH / 2, HEIGHT / 2 - 100 + (5*math.sin(offset))) {+ (10*math.sin(offset))}
