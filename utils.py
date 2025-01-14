@@ -115,7 +115,7 @@ def random_dims(HEIGHT, WIDTH):
 def draw_text_gradient(screen, font, text, gradient_colors, glow_color, outline_color, center_x, center_y, outline_offset=2):
     fontglow=pygame.font.Font('media/Fonts/Ethnocentric Rg.otf', 120)
     
-    #Render Glow
+    #Dropshadow code if glow is too heavy
     '''
     temp_surface = pygame.Surface((fontglow.size(text)[0], fontglow.size(text)[1]), pygame.SRCALPHA)
     glow_surface = fontglow.render(text, True, glow_color)
@@ -142,6 +142,7 @@ def draw_text_gradient(screen, font, text, gradient_colors, glow_color, outline_
     text_rect = text_surface.get_rect(center=(center_x, center_y))
     
     #Draw Glow
+    #'''
     for dx in range(-outline_offset-9, outline_offset + 10, 4):
         for dy in range(-outline_offset-9, outline_offset + 10, 4):
             # Skip the center to avoid double-rendering
@@ -152,7 +153,7 @@ def draw_text_gradient(screen, font, text, gradient_colors, glow_color, outline_
                 temp_surface.set_alpha(15)
                 glow_rect = temp_surface.get_rect(center=(center_x + dx, center_y + dy))
                 screen.blit(temp_surface, glow_rect)
-    
+    #'''
     # Draw the outline
     for dx in range(-outline_offset, outline_offset + 1):
         for dy in range(-outline_offset, outline_offset + 1):

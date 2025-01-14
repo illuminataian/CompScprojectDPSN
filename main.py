@@ -31,8 +31,7 @@ font_supporting = pygame.font.Font('media/Fonts/Orbitron-Black.ttf', 60)
 correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
 wrong_sound = pygame.mixer.Sound("media/Sounds/Wrong.mp3")
 
-pygame.mixer.music.load("media/Sounds/CompScproject_loop.wav")
-pygame.mixer.music.play(-1)
+
 
 bgs = [(255, 255, 0), (255, 0, 0), (0, 255, 0), (255, 0, 255), (0, 0, 255)]
 # Backgrounds
@@ -75,6 +74,8 @@ def end_game(final_score):
     
 titlescreen.show_title_screen(screen, title_Font, WIDTH, HEIGHT)
 
+pygame.mixer.music.load("media/Sounds/CompScproject_loop.wav")
+pygame.mixer.music.play(-1)
  
 while is_running:
     if not game_end:
