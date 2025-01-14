@@ -28,9 +28,10 @@ title_Font=pygame.font.Font('media/Fonts/Ethnocentric Rg.otf',170)
 font = pygame.font.Font('media/Fonts/Orbitron-Black.ttf', 90)
 font_supporting = pygame.font.Font('media/Fonts/Orbitron-Black.ttf', 60)
 # Sound effects
-correct_sound = pygame.mixer.Sound("media/Sounds/Correct.mp3")
-wrong_sound = pygame.mixer.Sound("media/Sounds/Wrong.mp3")
-
+correct_sound = pygame.mixer.Sound("media/Sounds/Correct.wav")
+wrong_sound = pygame.mixer.Sound("media/Sounds/Wrong.wav")
+correct_sound.set_volume(0.1)
+wrong_sound.set_volume(0.3)
 
 
 bgs = [(255, 255, 0), (255, 0, 0), (0, 255, 0), (255, 0, 255), (0, 0, 255)]
@@ -170,7 +171,7 @@ while is_running:
                 if event.type == pygame.QUIT:
                     game_end = False
                     exit()
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     game_end = False
                     exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
