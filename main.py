@@ -12,7 +12,7 @@ info = pygame.display.Info()
 WIDTH, HEIGHT = info.current_w, info.current_h
 GEN_X, GEN_Y  = WIDTH /2, HEIGHT/2
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
-pygame.display.set_caption("AAAAAAAAAAAAAA IM GOING CRAZY")
+pygame.display.set_caption("IMPULSE: A Reaction Game")
 TIME_LIMIT = 10
 
 # Colors
